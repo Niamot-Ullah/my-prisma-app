@@ -7,6 +7,7 @@ import { commentRouter } from "./modules/comment/comment.router";
 
 const app = express();
 
+//middleware => CORS 
 app.use(
   cors({
     origin:

@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { commentService } from "./comment.service";
+import { success } from "better-auth/*";
+import { CommentStatus } from "../../../generated/prisma/enums";
 
 
 const createComment = async (req: Request, res: Response) => {
@@ -7,7 +9,7 @@ const createComment = async (req: Request, res: Response) => {
     const user = req.user
     req.body.authorId = user?.id
     const result = await commentService.createComment(req.body);
-     res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "data created",
       data: result,
@@ -24,7 +26,7 @@ const getCommentById = async (req: Request, res: Response) => {
   try {
     const commentId = req.params.commentId
     const result = await commentService.getCommentById(commentId as any);
-     res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "data retrieved",
       data: result,
@@ -41,7 +43,7 @@ const getCommentByAuthorId = async (req: Request, res: Response) => {
   try {
     const authorId = req.params.authorId
     const result = await commentService.getCommentByAuthorId(authorId as any);
-     res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "data retrieved by author id",
       data: result,
@@ -56,11 +58,11 @@ const getCommentByAuthorId = async (req: Request, res: Response) => {
 
 const deleteComment = async (req: Request, res: Response) => {
   try {
-    const user = req.user 
+    const user = req.user
 
     const commentId = req.params.commentId
-    const result = await commentService.deleteComment(commentId as string,user?.id as string);
-     res.status(201).json({
+    const result = await commentService.deleteComment(commentId as string, user?.id as string);
+    res.status(201).json({
       success: true,
       message: "Comment deleted",
       data: result,
@@ -73,7 +75,45 @@ const deleteComment = async (req: Request, res: Response) => {
   }
 };
 
+const updateComment = async (req: Request, res: Response) => {
+  try {
+    const user = req?.user?.id as string
+    const data = req.body
+    const commentId = req.params.commentId as string
+    const result = await commentService.updateComment(commentId,user,data);
+    res.status(201).json({
+      success: true,
+      message: "Comment updated",
+      data: result,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err,
+    });
+  }
+};
 
+const moderateComment = async(req: Request, res: Response)=>{
+  try {
+    const id = req.params.commentId as string
+    const data = req.body.status as CommentStatus
+
+    const result = await commentService.moderateComment(id,data);
+    res.status(201).json({
+      success:true,
+      message:'comment updated',
+      data:result
+    })
+  } catch (err) {
+    const errorMessage = (err instanceof Error) ? err.message : "Comment Update Failed"
+    res.status(400).json({
+      success: false,
+      error: errorMessage,
+      details : err
+    });
+  }
+}
 
 
 
@@ -82,5 +122,8 @@ export const commentController = {
   createComment,
   getCommentById,
   getCommentByAuthorId,
-  deleteComment
+  deleteComment,
+  updateComment,
+  moderateComment,
+
 };

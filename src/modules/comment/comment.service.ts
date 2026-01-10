@@ -1,3 +1,4 @@
+import { CommentStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { Request } from "express";
 
@@ -61,17 +62,17 @@ const getCommentByAuthorId = async (authorId: string) => {
 };
 
 
-const deleteComment = async (commentId: string,authorId:string) => {
+const deleteComment = async (commentId: string, authorId: string) => {
     const commentData = await prisma.comment.findFirst({
         where: {
             id: commentId,
             authorId
         },
-        select:{
-            id:true
+        select: {
+            id: true
         }
     });
-    if(!commentData){
+    if (!commentData) {
         throw new Error("Your data is not found")
     }
     return await prisma.comment.delete({
@@ -81,10 +82,56 @@ const deleteComment = async (commentId: string,authorId:string) => {
     });
 };
 
+const updateComment = async (commentId: string, authorId: string, data: { content?: string, status?: CommentStatus }) => {
+
+    const commentData = await prisma.comment.findFirst({
+        where: {
+            id: commentId,
+            authorId
+        },
+        select: {
+            id: true
+        }
+    });
+    if (!commentData) {
+        throw new Error("Your data is not found")
+    }
+    return await prisma.comment.update({
+        where: {
+            id: commentId
+        },
+        data
+    })
+
+
+}
+
+const moderateComment = async (id: string, status: CommentStatus) => {
+    // if exists , it contains data in commentData but if not , it will throw an error
+    const commentData = await prisma.comment.findUniqueOrThrow({
+        where: {
+            id
+        }
+    })
+    if(commentData && commentData?.status === status){
+        return 'Status already up to date'
+    }
+    const result = await prisma.comment.update({
+        where: {
+            id
+        },
+        data: {
+            status
+        },
+    })
+    return result
+}
 
 export const commentService = {
     createComment,
     getCommentById,
     getCommentByAuthorId,
     deleteComment,
+    updateComment,
+    moderateComment,
 };
