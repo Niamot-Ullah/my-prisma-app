@@ -127,6 +127,25 @@ const updatePost = async (req: Request, res: Response) => {
     });
   }
 };
+
+const getStats = async (req: Request, res: Response) => {
+  try {
+    
+    const result = await postService.getStats()
+    res.status(200).json({
+      success: true,
+      message: "data retrieved",
+      data: result,
+    });
+  } catch (err) {
+    const errorMessage = (err instanceof Error) ? err.message : "stats retrieved Failed"
+    res.status(400).json({
+      success: false,
+      error: 'errorMessage',
+      details: errorMessage
+    });
+  }
+};
 const deletePost = async (req: Request, res: Response) => {
   try {
     const postId = req?.params?.id as string
@@ -151,11 +170,15 @@ const deletePost = async (req: Request, res: Response) => {
   }
 };
 
+
+
+
 export const postController = {
   createPost,
   getPosts,
   getSinglePost,
   getMyPosts,
   updatePost,
-  deletePost
+  deletePost,
+  getStats
 };

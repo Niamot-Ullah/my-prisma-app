@@ -5,6 +5,7 @@ import {
 } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+// import { CommentStatus } from './../../../generated/prisma/enums';
 
 
 
@@ -251,6 +252,45 @@ const deletePost = async (postId: string, authorId: string, isAdmin: boolean) =>
   return result
 }
 
+const getStats = async () => {
+  const [
+    totalPosts,
+    publishedPosts,
+    draftPosts,
+    archivedPosts,
+    totalComments,
+    approvedComment,
+    totalUsers,
+    adminCount,
+    userCount,
+    totalViews
+  ] = await Promise.all([
+    prisma.post.count(),
+    prisma.post.count({ where: { status: postStatus.PUBLISHED } }),
+    prisma.post.count({ where: { status: postStatus.DRAFT } }),
+    prisma.post.count({ where: { status: postStatus.ARCHIVED } }),
+    prisma.comment.count(),
+    prisma.comment.count({ where: { status: CommentStatus.APPROVED } }),
+    prisma.user.count(),
+    prisma.user.count({ where: { role: "ADMIN" } }),
+    prisma.user.count({ where: { role: "USER" } }),
+    prisma.post.aggregate({ _sum: { views: true } }),
+  ]);
+
+  return {
+    totalPosts,
+    publishedPosts,
+    draftPosts,
+    archivedPosts,
+    totalComments,
+    approvedComment,
+    totalUsers,
+    adminCount,
+    userCount,
+    totalViews: totalViews._sum.views ?? 0,
+  };
+};
+
 
 
 
@@ -260,5 +300,6 @@ export const postService = {
   getSinglePost,
   getMyPosts,
   updatePost,
-  deletePost
+  deletePost,
+  getStats
 };

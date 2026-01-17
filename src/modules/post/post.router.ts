@@ -6,6 +6,7 @@ const router = express.Router()
 
 router.post('/',auth(UserRole.USER,UserRole.ADMIN),postController.createPost)
 router.get('/my-posts',auth(UserRole.USER,UserRole.ADMIN),postController.getMyPosts)
+router.get('/stats',postController.getStats)
 router.get('/',postController.getPosts)
 router.get('/:id',postController.getSinglePost)
 router.put('/:id',auth(UserRole.USER,UserRole.ADMIN),postController.updatePost)
