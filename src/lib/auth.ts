@@ -20,6 +20,20 @@ export const auth = betterAuth({
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),
   trustedOrigins: [process.env.APP_URL!],
+   // 🔑 REQUIRED
+  // baseURL: "http://localhost:5000",
+
+  // // 🔑 REQUIRED
+  // trustedOrigins: [
+  //   "http://localhost:3000"
+  // ],
+
+  // // 🔑 REQUIRED for OAuth
+  // cookies: {
+  //   secure: false,   // MUST be false for http
+  //   sameSite: "lax", // OAuth redirect requirement
+  // },
+
   user: {
     additionalFields: {
       role: {
