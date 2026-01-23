@@ -17,22 +17,10 @@ const transporter = nodemailer.createTransport({
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
-    provider: "postgresql", // or "mysql", "postgresql", ...etc
+    provider: "postgresql", 
   }),
   trustedOrigins: [process.env.APP_URL!],
-   // 🔑 REQUIRED
-  // baseURL: "http://localhost:5000",
 
-  // // 🔑 REQUIRED
-  // trustedOrigins: [
-  //   "http://localhost:3000"
-  // ],
-
-  // // 🔑 REQUIRED for OAuth
-  // cookies: {
-  //   secure: false,   // MUST be false for http
-  //   sameSite: "lax", // OAuth redirect requirement
-  // },
 
   user: {
     additionalFields: {
@@ -61,9 +49,9 @@ export const auth = betterAuth({
     sendOnSignUp:true,
     autoSignInAfterVerification:true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
-
+      
       try {
+        const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
         const info = await transporter.sendMail({
           from: `"MY-PRISMA-APP" <${process.env.APP_USER}>`,
           to: user.email, // Send to the actual user

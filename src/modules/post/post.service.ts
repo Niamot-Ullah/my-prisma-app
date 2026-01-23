@@ -61,6 +61,8 @@ const getSinglePost = async (id: string) => {
 
   return postData;
 };
+
+
 const getPosts = async (payload: {
   search: string | undefined;
   tags: string[] | [];
@@ -147,6 +149,8 @@ const getPosts = async (payload: {
     },
   };
 };
+
+
 // const getSinglePost = async (id: string) => {
 //   return await prisma.$transaction(async (tx) => {
 //     await tx.post.update({

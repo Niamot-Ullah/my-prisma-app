@@ -44,6 +44,7 @@ const createPost = async (req: Request, res: Response) => {
     });
   }
 };
+
 const getPosts = async (req: Request, res: Response) => {
   try {
     const { search } = req.query;
@@ -86,6 +87,7 @@ const getPosts = async (req: Request, res: Response) => {
     });
   }
 };
+
 const getMyPosts = async (req: Request, res: Response) => {
   try {
     const user = req.user
